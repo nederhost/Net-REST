@@ -26,10 +26,10 @@ sub _init {
       content_type => 'application/json',		# an override for the content type; serializers will have sensible defaults
       methods => {
         '*' 		=> { route => ['&', '*'] },
-        'post' 		=> { http => 'post' },
-        'create'	=> { http => 'post' },
-        'update'	=> { http => 'post' },
-        'reset'		=> { http => 'post' },
+        'post' 		=> { http => 'post', pass_arguments => 1 },
+        'create'	=> { http => 'post', pass_arguments => 1 },
+        'update'	=> { http => 'post', pass_arguments => 1 },
+        'reset'		=> { http => 'post', pass_arguments => 1 },
         'get'		=> { http => 'get', 	route => ['#0'] },
         'list'		=> { http => 'get' },
         'delete' 	=> { http => 'delete',	route => ['#0'] },
