@@ -147,7 +147,6 @@ sub execute {
       $self->_hook_post_parse ( $resp_content );
       
       if ( defined $resp_content ) {
-
         my $error;
         # If path_as_error defines a specific kind of path, try to traverse it.
         if ( my $p = $self->{config}{response}{path_as_error} ) {
@@ -163,7 +162,7 @@ sub execute {
           }
         }
         
-        $error = $self->_get_error ( $resp_content );
+        $error ||= $self->_get_error ( $resp_content );
         $self->{global_state}{error} = Net::REST::Error->new ( $error ) if ( defined $error );
         
       }  
