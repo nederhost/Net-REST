@@ -135,6 +135,11 @@ sub parse {
           if ( my $validation_reference = $c->{$prefix . 'Document'}{$prefix . 'MndtAccptncRpt'}{$prefix . 'GrpHdr'}{$prefix . 'Authstn'}{$prefix . 'Prtry'} ) {
             $response->{status}{mandate}{validation_reference} = $validation_reference;
           }
+          
+          if ( my $timestamp = $response->{AcquirerStatusRes}{Transaction}{statusDateTimestamp} || $response->{AcquirerStatusRes}{createDateTimestamp} ) {
+            my ( $date, $time ) = split ( 'T', $timestamp );
+            $response->{status}{mandate}{signature_date} = $date;
+          }
         }    
       }
     }
@@ -550,6 +555,11 @@ following keys:
 =item * mandate_id
 
 The mandate ID as originally provided.
+
+=item * signature_date
+
+The date of the signature, as should be specified in the PAIN 008 message
+('YYYY-MM-DD' format).
 
 =item * validation_reference
 
