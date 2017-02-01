@@ -22,16 +22,18 @@ sub new {
     $self->{type} = 'request';
     $self->{error} = $obj;
     if ( ref $obj eq 'HASH' ) {
-      foreach ( 'errorcode', 'errorno', 'errno', 'err', 'code', 'error' ) {
-        if ( exists $obj->{$_} ) {
-          $self->{code} = $obj->{$_};
-          last;
+      foreach my $k ( %{$obj} ) {
+        foreach ( 'errorcode', 'errorno', 'errno', 'err', 'code', 'error' ) {
+          if ( lc ( $k ) eq $_ ) {
+            $self->{code} = $obj->{$k};
+            last;
+          }
         }
-      }
-      foreach ( 'errormessage', 'errormsg', 'errmsg', 'message', 'error' ) {
-        if ( exists $obj->{$_} ) {
-          $self->{message} = $obj->{$_};
-          last;
+        foreach ( 'errormessage', 'errormsg', 'errmsg', 'message', 'error' ) {
+          if ( lc ( $k ) eq $_ ) {
+            $self->{message} = $obj->{$k};
+            last;
+          }
         }
       }
     }
