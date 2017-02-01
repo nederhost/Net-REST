@@ -132,7 +132,7 @@ sub execute {
     my $resp_content = $response->decoded_content;
 
     if ( $self->{debug} ) {
-      print STDERR $response->dump ( prefix => "$self <<< ", maxlenght => 10240, no_content => '' );
+      print STDERR $response->dump ( prefix => "$self <<< ", maxlength => 10240, no_content => '' );
     }
   
     # Regardless of the status, we try to parse whatever content we got. 
