@@ -62,6 +62,36 @@ sub parse {
   my $self = shift;
   my ( $method, $content_type, $xml ) = @_;
   my $response = $self->SUPER::parse ( @_ );
+
+  # Sometimes the eMandate platform uses a namespace prefix even for it's
+  # primary namespace. No big problem, but we do need to do some work.
+
+  my ( $root_elem ) = ( keys grep /^-/ %{result} );
+  if ( root_elem =~ /^([^:]+):(.+)$/ ) {
+
+    my $default_ns = $1;
+    sub rename_elements {
+      my $in = shift;
+      if ( ref $in eq 'HASH' ) {
+        while ( my ( $k, $v ) = each %{$in} ) {
+          if ( $k =~ /^$default_ns:(.+)/ ) {
+            $in->{$1} = $v;
+            delete $in->{$k};
+            if ( ref $v ) {
+              rename_elements ( $v );
+            }
+          }
+        }
+      } elsif ( ref $in eq 'ARRAY' ) {
+        foreach my $e ( @{$in} ) {
+          rename_elements ( $e );
+        }
+      }
+    }
+
+    rename_elements ( $result );
+
+  }
   
   # The default XML::Fast parser is pretty nice, but we do some additional
   # work to fetch the most useful data from the response and put it in a
