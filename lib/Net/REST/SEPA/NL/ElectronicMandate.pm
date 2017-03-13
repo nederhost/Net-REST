@@ -89,7 +89,7 @@ sub parse {
       }
     }
 
-    rename_elements ( $result );
+    rename_elements ( $response );
 
   }
   
