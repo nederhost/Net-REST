@@ -67,29 +67,30 @@ sub parse {
   # primary namespace. No big problem, but we do need to do some work.
 
   my ( $root_elem ) = grep /^-/, ( keys %{$response} );
-  if ( root_elem =~ /^([^:]+):(.+)$/ ) {
+  if ( $root_elem =~ /^([^:]+):(.+)$/ ) {
 
     my $default_ns = $1;
     sub rename_elements {
+      my $ns = shift;
       my $in = shift;
       if ( ref $in eq 'HASH' ) {
         while ( my ( $k, $v ) = each %{$in} ) {
-          if ( $k =~ /^$default_ns:(.+)/ ) {
+          if ( $k =~ /^$ns:(.+)/ ) {
             $in->{$1} = $v;
             delete $in->{$k};
             if ( ref $v ) {
-              rename_elements ( $v );
+              rename_elements ( $ns, $v );
             }
           }
         }
       } elsif ( ref $in eq 'ARRAY' ) {
         foreach my $e ( @{$in} ) {
-          rename_elements ( $e );
+          rename_elements ( $ns, $e );
         }
       }
     }
 
-    rename_elements ( $response );
+    rename_elements ( $ns, $response );
 
   }
   
