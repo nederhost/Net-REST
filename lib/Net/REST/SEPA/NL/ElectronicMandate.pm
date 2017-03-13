@@ -90,7 +90,7 @@ sub parse {
       }
     }
 
-    rename_elements ( $ns, $response );
+    rename_elements ( $default_ns, $response );
 
   }
   
