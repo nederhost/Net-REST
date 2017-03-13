@@ -66,7 +66,7 @@ sub parse {
   # Sometimes the eMandate platform uses a namespace prefix even for it's
   # primary namespace. No big problem, but we do need to do some work.
 
-  my ( $root_elem ) = grep /^-/, ( keys %{$response} );
+  my ( $root_elem ) = ( grep /^-/, ( keys %{$response} ))[0];
   if ( $root_elem =~ /^([^:]+):(.+)$/ ) {
 
     my $default_ns = $1;
