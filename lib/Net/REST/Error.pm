@@ -23,13 +23,13 @@ sub new {
     $self->{error} = $obj;
     if ( ref $obj eq 'HASH' ) {
       foreach my $k ( %{$obj} ) {
-        foreach ( 'errorcode', 'errorno', 'errno', 'err', 'code', 'error' ) {
+        foreach ( 'errorcode', 'errorno', 'errno', 'err', 'code', 'error', 'status' ) {
           if ( lc ( $k ) eq $_ ) {
             $self->{code} = $obj->{$k};
             last;
           }
         }
-        foreach ( 'errormessage', 'errormsg', 'errmsg', 'message', 'error' ) {
+        foreach ( 'errormessage', 'errormsg', 'errmsg', 'message', 'error', 'detail' ) {
           if ( lc ( $k ) eq $_ ) {
             $self->{message} = $obj->{$k};
             last;

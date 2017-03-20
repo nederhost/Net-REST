@@ -142,9 +142,9 @@ sub execute {
     
     if ( length ( $resp_content ) && ( my $p = $self->{config}{response}{parser} )) {    
 
-      $self->_hook_pre_parse ( $resp_content );
+      $self->_hook_pre_parse ( $resp_content, $response );
       $resp_content = $p->parse ( $method, $response->header ( 'Content-Type' ), $resp_content );
-      $self->_hook_post_parse ( $resp_content );
+      $self->_hook_post_parse ( $resp_content, $response );
       
       if ( defined $resp_content ) {
         my $error;
@@ -173,10 +173,8 @@ sub execute {
       $self->{global_state}{error} = Net::REST::Error->new ( $response );
     }
     
-    # Return undef in case of an error.
     if ( $self->{global_state}{error} ) {
       $self->_hook_post_request_error ( $self->{global_state}{error} );
-      return undef;
     }
     
     my $value = $self->_get_value ( $resp_content );
@@ -197,7 +195,11 @@ sub route {
     # Just a shallow copy works fine.
     my $clone = { %{$self} };
     bless $clone, ref $self;
-    $clone->{route} .= '/' unless ( $clone->{route} =~ m{/$} );
+    if ( $routes[0] =~ m{^https?://}i ) {	# not a relative path
+      $clone->{route} = shift @routes;
+    } elsif ( $clone->{route} !~ m{/$} ) {	# add a backslash
+      $clone->{route} .= '/';
+    }
     $clone->{route} .= join ( '/', @routes );
     return $clone;
   
@@ -218,7 +220,7 @@ sub _hook_post_execute {}
 
 # And these ones can be overridden as well.
 sub _get_error {}
-sub _get_value { $_[1] }
+sub _get_value { $_[0]->{global_state}{error} ? undef : $_[1] }
 sub _process_parameters { shift; return { @_ }; }
 
 sub AUTOLOAD {
