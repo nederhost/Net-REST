@@ -110,13 +110,7 @@ sub _encode_base64url {
 # Find objects in output from the ACME system and automatically instantiate
 # them.
 sub _find_objects {
-  my $self = shift;
-  
-  warn "FINDING OBJECTS";
-  
-  use Data::Dumper;
-  warn Data::Dumper::Dumper ( [ $_[0] ] );
-  
+  my $self = shift;  
   if ( ref $_[0] eq 'HASH' ) {
     if ( $_[0]->{uri} ) {		# An object!
       $_[0] = Net::REST::ACME::Object->new ( $self, $_[0]->{uri}, $_[0] );
@@ -150,8 +144,6 @@ sub _hook_pre_request {
     my $json = $self->_encode_base64url ( $content );
     my $header = $self->_encode_base64url ( '{"nonce":"' . $Net::REST::ACME::replay_nonce . '"}' );    
     my $sig = $self->_encode_base64url ( $self->{acme}{key}->sign ( "$header.$json" ));
-    use Data::Dumper;
-    warn Data::Dumper::Dumper ( [ $self->{acme}{jwk} ] );
     $req->content (
       $self->{acme}{jws_json}->encode (
         { 
@@ -181,7 +173,6 @@ sub _hook_post_request {
   # Update any links.
   if ( my @links = $res->header ( 'Link' )) {  
     foreach my $l ( @links ) {
-    warn "LINK: $l";
       next unless ( $l && $l =~ /^<([^>]+)>;rel="([^"]+)"$/i );
       $self->{links}{$2} = $1;
     }
@@ -198,7 +189,6 @@ sub _hook_post_parse {
   }
   
   if ( my $object_url = $res->header ( 'Location' )) {
-  warn "object at $object_url";
     # We got an object returned.
     $_[0] = Net::REST::ACME::Object->new ( $self, $object_url, $_[0] );
   } elsif ( ref $_[0] ) {

@@ -17,7 +17,11 @@ sub default_content_type { 'application/json' }
 sub parse {
   my $self = shift;
   my ( $method, $content_type, $json ) = @_;
-  return eval { $self->{json}->decode ( $json ) };
+  if ( $content_type =~ /json|javascript/ ) {
+    return eval { $self->{json}->decode ( $json ) };
+  } else {
+    return $json;
+  }
 }
 
 sub serialize {
