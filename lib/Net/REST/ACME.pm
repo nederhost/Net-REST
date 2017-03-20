@@ -11,6 +11,7 @@ use Net::REST::Codec::JSON;
 use Carp;
 use Crypt::OpenSSL::Bignum;
 use Crypt::OpenSSL::RSA;
+use Digest::SHA;
 use JSON::XS;
 use MIME::Base64;
 
@@ -40,6 +41,8 @@ sub _init {
         n => $self->_encode_base64url ( pack ( 'H*', $n )),
         e => $self->_encode_base64url ( pack ( 'H*', $e ))
       };
+      
+      $self->{acme}{fingerprint} = $self->_encode_base64url ( Digest::SHA::sha256 ( $self->{acme}{jws_json}->encode ( $self->{jwk} )));
       
     } else { croak "Cannot load RSA key from $param{key}" }
   } else {
@@ -198,6 +201,10 @@ sub _hook_post_parse {
 
 sub links {
   shift->{links} || {};
+}
+
+sub fingerprint { 
+  shift->{acme}{fingerprint} 
 }
 
 package Net::REST::ACME::Object;
