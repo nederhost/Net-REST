@@ -186,6 +186,8 @@ sub _hook_post_parse {
   if ( $res->header ( 'Content-Type' ) eq 'application/problem+json' ) {
     $self->{global_state}{error} = Net::REST::Error->new ( $content );
     $_[0] = undef;
+  } elsif ( $res->header ( 'Content-Type' ) eq 'application/pkix-cert' ) {
+    $_[0] = { certificate => $_[0] };
   }
   
   if ( my $object_url = $res->header ( 'Location' )) {
