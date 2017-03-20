@@ -9,6 +9,7 @@ use base 'Net::REST';
 use Net::REST::Codec::JSON;
 
 use Carp;
+use Crypt::Format;
 use Crypt::OpenSSL::Bignum;
 use Crypt::OpenSSL::RSA;
 use Digest::SHA;
@@ -87,6 +88,13 @@ sub do {
     croak "Request not in directory: $req";
   }
   
+}
+
+sub encode_pem {
+  my $self = shift;
+  my ( $pem ) = @_;
+  
+  return $self->_encode_base64url ( Crypt::Format::pem2der ( $pem ));
 }
 
 # Our own private subroutine for this, because the CentOS standard
