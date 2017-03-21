@@ -93,8 +93,10 @@ sub do {
 sub get_object {
   my $self = shift;
   my ( $uri ) = @_;
-  my $data = $self->get ( $uri );
-  return Net::REST::ACME::Object->new ( $self, $uri, $data );  
+  
+  my $object = $self->route ( $uri );
+  my $data = $object->get();  
+  return Net::REST::ACME::Object->new ( $object, $uri, $data );  
 }
 
 sub encode_pem {
@@ -179,11 +181,12 @@ sub _hook_post_request {
 
   # Update any links.
   if ( my @links = $res->header ( 'Link' )) {  
+  
     foreach my $l ( @links ) {
       next unless ( $l && $l =~ /^<([^>]+)>;rel="([^"]+)"$/i );
       $self->{links}{$2} = $1;
     }
-  } 
+  }
 }
 
 sub _hook_post_parse {
