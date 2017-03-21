@@ -43,7 +43,7 @@ sub _init {
         e => $self->_encode_base64url ( pack ( 'H*', $e ))
       };
       
-      $self->{acme}{fingerprint} = $self->_encode_base64url ( Digest::SHA::sha256 ( $self->{acme}{jws_json}->encode ( $self->{jwk} )));
+      $self->{acme}{fingerprint} = $self->_encode_base64url ( Digest::SHA::sha256 ( $self->{acme}{jws_json}->encode ( $self->{acme}{jwk} )));
       
     } else { croak "Cannot load RSA key from $param{key}" }
   } else {
