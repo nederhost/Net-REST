@@ -270,7 +270,11 @@ sub attr {
 
   unless ( defined $self->{acme_object}{data} ) {
     # Data not yet cached. Retrieve it.
-    $self->{acme_object}{data} = $self->SUPER::post( resource => $self->{acme_object}{type} );
+    if ( $self->{acme_object} =~ /^new-/ ) {
+      $self->{acme_object}{data} = $self->SUPER::post( resource => $self->{acme_object}{type} );
+    } else {
+      $self->{acme_object}{data} = $self->SUPER::get ( $self->{acme_object}{uri} );
+    }
     $self->_find_contained_objects;
   }
   
