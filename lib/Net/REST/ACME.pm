@@ -90,6 +90,12 @@ sub do {
   
 }
 
+sub get_object {
+  my $self = shift;
+  my ( $uri ) = @_;
+  return Net::REST::ACME::Object->new ( $self, $uri );  
+}
+
 sub encode_pem {
   my $self = shift;
   my ( $pem ) = @_;
