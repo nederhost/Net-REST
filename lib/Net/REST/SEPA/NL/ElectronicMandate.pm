@@ -255,7 +255,10 @@ sub serialize {
     $x->raw ( '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.009.001.04" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' );
     $x->startTag ( 'MndtInitnReq' );
     $x->startTag ( 'GrpHdr' );
-    $x->dataElement ( 'MsgId', sprintf ( '%s-%s-%s', $param->{mandate_id}, 'req', time ));
+    my $msgid = join ( '', $param->{mandate_id}, 'R', time );
+    $msgid =~ tr/A-Za-z0-9//cd;
+    $msgid = substr ( $msgid, 0, 35 ) if ( length ( $msgid ) > 35 );
+    $x->dataElement ( 'MsgId', $msgid );
     $x->dataElement ( 'CreDtTm', $timestamp );
     $x->endTag ( 'GrpHdr' );
     $x->startTag ( 'Mndt' );
