@@ -89,6 +89,10 @@ sub execute {
   my $http_method = uc ( shift );
   my $method = shift;
   my $param = $self->_process_parameters ( @_ );
+  
+  while ( my ( $key, $value ) = each %{$self->{default_arguments} || {}} ) {
+    $param->{$key} = $value unless ( exists $param->{$key} );
+  }
 
   $self->_hook_pre_execute ( $http_method, $method, $param );  
 
