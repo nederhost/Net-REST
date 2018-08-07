@@ -28,7 +28,7 @@ sub _init {
         '*' 		=> { route => ['&', '*'] },
         'post' 		=> { http => 'post', pass_arguments => 1 },
         'create'	=> { http => 'post', pass_arguments => 1 },
-        'update'	=> { http => 'patch', pass_arguments => 1 },
+        'update'	=> { http => 'post', pass_arguments => 1 },
         'reset'		=> { http => 'post', pass_arguments => 1 },
         'get'		=> { http => 'get', 	route => ['#0'] },
         'list'		=> { http => 'get' },
