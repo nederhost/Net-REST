@@ -37,6 +37,7 @@ sub _init {
 }
 
 sub _hook_pre_execute {
+  my $self = shift;
   my ( $http_method, $method, $param ) = @_;
   
   $param->{format} = 'json';
