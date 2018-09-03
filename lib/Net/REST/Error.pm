@@ -18,6 +18,11 @@ sub new {
     $self->{error} = {
       content => $obj->decoded_content
     };
+    $self->{headers} = {
+      map {
+        $_ => $obj->header ( $_ )
+      } ( $obj->header_field_names )
+    };
   } else {
     $self->{type} = 'request';
     $self->{error} = $obj;
@@ -43,6 +48,7 @@ sub new {
 }
 
 sub code { shift->{code} || 0 }
+sub headers { shift->{headers} || {} }
 sub message { shift->{message} || 'unknown error' }
 sub type { shift->{type} }
 

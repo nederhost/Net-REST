@@ -6,8 +6,15 @@ use warnings;
 use base 'Net::REST';
 use Net::REST::Codec::JSON;
 
+use HTTP::Date;
+
 sub _init {
   my $self = shift;
+  my %param = @_;
+  
+  if ( my $count = $param{autoretry_after_tmr} ) {			# autoretry after a 'too many requests' error?
+    $self->{moneybird}{autoretry_after_tmr} = $count;
+  }
   
   my $json = Net::REST::Codec::JSON->new;
   
@@ -43,12 +50,33 @@ sub _init {
   );
 }
 
-#sub _hook_pre_request {
-#  my $self = shift;
-#  my ( $req ) = @_;
-#  
-#  my $uri = $req->uri;
-#  unless ( $uri->
-#}
+sub execute {
+  my $self = shift;
+  my @arg = @_;
+  my $result = $self->SUPER::execute ( @arg );
+  if ( $self->{moneybird}{autoretry_after_tmr} ) {
+    if ( my $error = $self->error ) {
+      if (( $error->type eq 'http' ) && ( $error->code == 429 )) {	# Too many requests; wait and then retry.
+        my $count = $self->{moneybird}{autoretry_after_tmr};
+        while ( $count > 0 ) {
+          my $wait = $error->headers->{'Retry-After'};
+          if ( $wait && ( $wait !~ /^[0-9]+$/ )) {			# Got a HTTP timestamp
+            $wait = gmtime ( localtime ) - HTTP::Date::str2time ( $wait, 'GMT' );
+          }
+          $wait = 60 unless ( $wait && ( $wait > 0 ));			# By default we'll wait a minute.
+          warn "API said: " . $error->code . ' ' . $error->message. "; autoretrying after $wait second(s).\n";
+          sleep $wait + 1;
+          $count--;
+          $result = $self->SUPER::execute ( @arg );
+          $error = $self->error;
+          last unless ( $error );
+        }
+      }
+    }
+  }
+  
+  return $result;
+  
+}
 
 1;
