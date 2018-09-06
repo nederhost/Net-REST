@@ -39,6 +39,7 @@ sub _init {
         'get'		=> { http => 'get', 	route => ['#0'] },
         'list'		=> { http => 'get',	pass_arguments => 1 },
         'delete' 	=> { http => 'delete',	route => ['#0'] },
+        'upload'	=> { http => 'post', 	pass_arguments => 1 },
       }
     },
     
@@ -77,6 +78,45 @@ sub execute {
   
   return $result;
   
+}
+
+sub _hook_pre_serialisation {
+  my $self = shift;
+  my ( $req, $method, $param ) = @_;
+  
+  if ( $method eq 'upload' ) {		# We're uploading a file
+    $req->content_type ( 'multipart/mixed' );
+    foreach my $fieldname ( keys %{$param} ) {
+    
+      my ( $filename, $content_type, $content );
+      if ( ref $param->{$fieldname} eq 'HASH' ) {
+        $filename = $param->{$fieldname}{filename};
+        $content_type = $param->{$fieldname}{content_type};
+        if ( $param->{$fieldname}{content} ) {
+          $content = $param->{$fieldname}{content};
+        } else {
+          open ( FILE, $param->{$fieldname}{filename} ) or die 'Cannot open ' . $param->{$fieldname}{filename} . ' for reading: ' . $!;
+          $content = join ( '', <FILE> );
+          close ( FILE );
+        }
+      }
+      
+      $filename ||= $fieldname;
+      foreach ( $filename, $fieldname ) { s/"//g; }
+    
+      $req->add_part (
+        HTTP::Message->new (
+          [
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"; name="' . $fieldname . '"',
+            'Content-Length' => length ( $content ),
+            ( $content_type ? ( 'Content-Type' => $content_type ) : ())
+          ],
+          $content
+        )
+      );
+      delete $param->{$fieldname};
+    }
+  }
 }
 
 1;
