@@ -31,7 +31,7 @@ sub _init {
         'update'	=> { http => 'post', pass_arguments => 1 },
         'reset'		=> { http => 'post', pass_arguments => 1 },
         'get'		=> { http => 'get', 	route => ['#0'] },
-        'list'		=> { http => 'get' },
+        'list'		=> { http => 'get',  pass_arguments => 1 },
         'delete' 	=> { http => 'delete',	route => ['#0'] },
         'cancel'	=> { http => 'delete', 	route => ['#0'] },
         'revoke' 	=> { http => 'delete',	route => ['#0'] }
