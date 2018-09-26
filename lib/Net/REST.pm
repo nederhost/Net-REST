@@ -102,7 +102,10 @@ sub execute {
   # Add default headers (such as an API key)
   $req->headers->header ( %{$self->{default_headers}} ) if ( %{$self->{default_headers}} );
 
+  $self->_hook_pre_serialisation ( $req, $method, $param );
+
   # If arguments are given, serialise and add to request.
+  $param = undef if (( ref $param eq 'HASH' ) && ( ! %{$param} ));
   if ( $param ) {  
     if (( my $s = $self->{config}{request}{serializer} ) && (( $http_method eq 'POST' ) || ( $http_method eq 'PUT' ))) {
     
@@ -215,6 +218,7 @@ sub route {
 
 # Hooks to be overridden by specific sub classes.
 sub _hook_pre_execute {}
+sub _hook_pre_serialisation {}
 sub _hook_pre_request {}
 sub _hook_post_request {}
 sub _hook_pre_parse {}
@@ -240,7 +244,7 @@ sub AUTOLOAD {
     if ( $m->{route} && ( my @r = ( ref $m->{route} ? @{$m->{route}} : $m->{route} ))) {
     
       foreach ( @r ) {
-    
+      
         s{&}{$method}ge;			# Process the '&' marker which references the method name.
         s{\*}{join ( '/', @_ ) || ''}ge;	# Process the '*' marker which adds all arguments as route elements.
         my $highest_ref = -1;
@@ -249,7 +253,11 @@ sub AUTOLOAD {
           $highest_ref = $nr if ( $nr > $highest_ref );
           s{#$nr}{$_[$nr] || ''}ge;
         }
-        s{#\*}{join ( '/', @_[($highest_ref + 1)..$#_] ) || ''}ge;	# Process the '#*' marker which takes all remaining arguments.
+        if ( m{#\*} ) {				# Process the '#*' marker which takes all remaining arguments.
+          s{#\*}{join ( '/', @_[($highest_ref + 1)..$#_] ) || ''}ge;
+        } elsif ( $highest_ref >= 0 ) {		# Shift arguments rom the @_ array if necessary (we won't need them anymore and they should not be passed as arguments).
+          @_ = @_[( $highest_ref + 1 )..$#_];
+        }
       
       }
       
