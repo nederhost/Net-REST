@@ -107,7 +107,7 @@ sub execute {
   # If arguments are given, serialise and add to request.
   $param = undef if (( ref $param eq 'HASH' ) && ( ! %{$param} ));
   if ( $param ) {  
-    if (( my $s = $self->{config}{request}{serializer} ) && (( $http_method eq 'POST' ) || ( $http_method eq 'PUT' ))) {
+    if (( my $s = $self->{config}{request}{serializer} ) && ( $http_method ne 'GET' )) {
     
       # Serialize parameters in the request body.
       my ( $content_type, $content_body ) = $s->serialize ( $method, $param );
