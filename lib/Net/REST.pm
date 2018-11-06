@@ -147,7 +147,7 @@ sub execute {
     # along with informational content serialised in whatever format they
     # support.
     
-    if ( length ( $resp_content ) && ( my $p = $self->{config}{response}{parser} )) {    
+    if ( length ( $resp_content ) && ( my $p = $self->{config}{response}{parser} )) {
 
       $self->_hook_pre_parse ( $resp_content, $response );
       $resp_content = $p->parse ( $method, $response->header ( 'Content-Type' ), $resp_content );
