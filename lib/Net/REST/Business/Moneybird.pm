@@ -122,6 +122,25 @@ sub execute {
   
 }
 
+sub synchronize_all {								# Method to use the synchronization API to get all matching elements
+  my $self = shift;
+  my @arg = @_;
+  
+  if ( my $s = $self->synchronization->list ( @arg )) {
+    my @item_ids = map { $_->{id} } @{$s};
+    my @items;
+    while ( @item_ids ) {
+      my @this_round_ids = splice @item_ids, 0, ( @item_ids > 100 ? 99 : $#item_ids );
+      if ( my $these_items = $self->synchronization->post ( ids => \@this_round_ids )) {
+        push @items, @{$these_items};
+      } else { return undef }
+    }
+    return \@items;
+  } else {
+    return $self->list ( @arg );
+  }
+}
+
 sub _hook_pre_serialisation {
   my $self = shift;
   my ( $req, $method, $param ) = @_;
