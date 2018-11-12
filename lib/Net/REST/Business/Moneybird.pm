@@ -130,7 +130,7 @@ sub synchronize_all {								# Method to use the synchronization API to get all 
     my @item_ids = map { $_->{id} } @{$s};
     my @items;
     while ( @item_ids ) {
-      my @this_round_ids = splice @item_ids, 0, ( @item_ids > 100 ? 99 : $#item_ids );
+      my @this_round_ids = splice @item_ids, 0, ( @item_ids > 100 ? 100 : $#item_ids + 1 );
       if ( my $these_items = $self->synchronization->post ( ids => \@this_round_ids )) {
         push @items, @{$these_items};
       } else { return undef }
