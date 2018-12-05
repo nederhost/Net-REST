@@ -11,6 +11,7 @@ use LWP::UserAgent;
 use HTTP::Response;
 use HTTP::Request;
 use Net::REST::Error;
+use Time::HiRes;
 
 our $AUTOLOAD;
 
@@ -66,6 +67,7 @@ sub new {
   } else { croak "Required parameter base_url not specified" }
 
   $self->{debug} = 1 if ( $param{debug} );
+  $self->{autothrottle} = $param{autothrottle};
   $self->{global_state} = {};
 
   return $self;
@@ -129,8 +131,19 @@ sub execute {
     print STDERR $req->dump ( prefix => "$self >>> ", maxlength => 10240, no_content => '' );
     print STDERR "$self ---\n";
   }
+  
+  # If we autothrottle requests, this is the moment to wait a bit.
+  if ( my $throttle = $self->{authothrottle} ) {
+    if ( my $previous = $self->{global_state}{last_request} ) {
+      my $elapsed = Time::HiRes::time - $previous;
+      if ( $elapsed < $throttle ) {
+        Time::HiRes::sleep ( $throttle - $elapsed );
+      }
+    }
+    $self->{global_state}{last_request} = Time::HiRes::time;
+  }
 
-  # Now we execute the request.  
+  # Now we execute the request.
   $self->{global_state}{error} = undef;
   if ( my $response = $self->{ua}->request ( $req )) {
   
