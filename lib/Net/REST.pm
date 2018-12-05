@@ -133,7 +133,7 @@ sub execute {
   }
   
   # If we autothrottle requests, this is the moment to wait a bit.
-  if ( my $throttle = $self->{authothrottle} ) {
+  if ( my $throttle = $self->{autothrottle} ) {
     if ( my $previous = $self->{global_state}{last_request} ) {
       my $elapsed = Time::HiRes::time - $previous;
       if ( $elapsed < $throttle ) {
