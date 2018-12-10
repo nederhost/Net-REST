@@ -26,7 +26,9 @@ sub new {
   } else {
     $self->{type} = 'request';
     $self->{error} = $obj;
-    if ( ref $obj eq 'HASH' ) {
+    if ( ! ref $obj ) {
+      $self->{message} = $obj;
+    } elsif ( ref $obj eq 'HASH' ) {
       foreach my $k ( %{$obj} ) {
         foreach ( 'errorcode', 'errorno', 'errno', 'err', 'code', 'error', 'status' ) {
           if ( lc ( $k ) eq $_ ) {
