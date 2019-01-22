@@ -64,27 +64,45 @@ sub download {						# A bit hacky, but this is the 'nicest' way to download file
 
   $req->headers->header ( %{$self->{default_headers}} ) if ( %{$self->{default_headers}} );
 
-  # If arguments are given, serialise and add to request.
-  $param = undef if (( ref $param eq 'HASH' ) && ( ! %{$param} ));
-  if ( $param ) {
-    $uri->query_form ( %{$param} );
-    $req->uri ( $uri );
-  }
+  my $tries = 0;
+  
+  while ( $tries++ < 3 ) {
 
-  if ( $self->{debug} ) {
-    print STDERR $req->dump ( prefix => "$self >>> ", maxlength => 10240, no_content => '' );
-    print STDERR "$self ---\n";
-  }
-
-  # Now we execute the request.
-  if ( my $response = $self->{ua}->request ( $req )) {
+    # If arguments are given, serialise and add to request.
+    $param = undef if (( ref $param eq 'HASH' ) && ( ! %{$param} ));
+    if ( $param ) {
+      $uri->query_form ( %{$param} );
+      $req->uri ( $uri );
+    }
 
     if ( $self->{debug} ) {
-      print STDERR $response->dump ( prefix => "$self <<< ", maxlength => 10240, no_content => '' );
+      print STDERR $req->dump ( prefix => "$self >>> ", maxlength => 10240, no_content => '' );
       print STDERR "$self ---\n";
     }
+
+    # Now we execute the request.
+    if ( my $response = $self->{ua}->request ( $req )) {
+
+      if ( $self->{debug} ) {
+        print STDERR $response->dump ( prefix => "$self <<< ", maxlength => 10240, no_content => '' );
+        print STDERR "$self ---\n";
+      }
+    
+      # This is a bit of a hack, apparantly necessary due to a recent change by Moneybird?
       
-    return $response;
+      my $content = $response->decoded_content;
+      if ( $content =~ /<Error>/ ) {
+        if ( $content =~ /Only one auth mechanism allowed/ ) {
+          $req->headers->clear;
+          next;
+        }
+        return undef;
+        
+      }
+      
+      return $response;
+      
+    }
   }
 
   # If we're here something went wrong.
