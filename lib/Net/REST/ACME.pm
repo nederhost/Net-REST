@@ -244,10 +244,12 @@ sub new {
   my @p = ( reverse split '/', $uri );
   $self->{acme_object}{type} = $p[1];	# a reasonable guess
   foreach my $p ( reverse ( split '/', $uri )) {
-    if ( 
+    if ( $p =~ /^chall-v[0-9]+$/ ) {
+      $self->{acme_object}{type} = 'challenge';
+    } elsif ( 
       grep { $p eq $_ } qw( 
         directory new-nonce new-reg reg new-authz new-app app authz challenge 
-        cert cert-chain revoke-cert new-cert key-change 
+        cert cert-chain revoke-cert new-cert key-change
       )
     ) {
       $self->{acme_object}{type} = $p;
