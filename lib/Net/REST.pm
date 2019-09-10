@@ -92,8 +92,10 @@ sub execute {
   my $method = shift;
   my $param = $self->_process_parameters ( @_ );
   
-  while ( my ( $key, $value ) = each %{$self->{default_arguments} || {}} ) {
-    $param->{$key} = $value unless ( exists $param->{$key} );
+  if (( ! $param ) || ( ref $param eq 'HASH' )) {
+    while ( my ( $key, $value ) = each %{$self->{default_arguments} || {}} ) {
+      $param->{$key} = $value unless ( exists $param->{$key} );
+    }
   }
 
   $self->_hook_pre_execute ( $http_method, $method, $param );  
@@ -116,10 +118,10 @@ sub execute {
       $req->content ( $content_body );
       $req->headers->header ( 'Content-Type' => $self->{config}{request}{content_type} || $content_type );
 
-    } elsif ( ref $param eq 'HASH' ) {
+    } elsif (( ref $param eq 'HASH' ) || ( ref $param eq 'ARRAY' )) {
     
       # Add parameters to the URL.
-      $uri->query_form ( %{$param} );
+      $uri->query_form ( $param );
       $req->uri ( $uri );
       
     }

@@ -43,4 +43,9 @@ sub _init {
   );
 }
 
+# SorryApp allows for parameters to be specified more than once (for
+# filtering).
+
+sub _process_parameters { shift; return [ @_ ]; }
+
 1;
