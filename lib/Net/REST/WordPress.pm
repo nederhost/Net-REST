@@ -45,14 +45,14 @@ sub _hook_post_request {
   my $self = shift;
   my ( $response ) = @_;
   
-  $self->{_wordpress}{meta} = {};
+  $self->{global_state}{_wordpress}{meta} = {};
   foreach ( 'Total', 'TotalPages' ) {
-    $self->{_wordpress}{meta}{lc ( $_ )} = $response->header ( 'X-WP-' . $_ );
+    $self->{global_state}{_wordpress}{meta}{lc ( $_ )} = $response->header ( 'X-WP-' . $_ );
   }
 }
 
 sub get_meta {
-  shift->{_wordpress}{meta};
+  shift->{global_state}{_wordpress}{meta};
 }
 
 1;
