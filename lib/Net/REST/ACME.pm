@@ -13,7 +13,7 @@ use Crypt::Format;
 use Crypt::OpenSSL::Bignum;
 use Crypt::OpenSSL::RSA;
 use Digest::SHA;
-use JSON::XS;
+use JSON;
 use MIME::Base64;
 
 our $AUTOLOAD;
@@ -25,7 +25,7 @@ sub _init {
   
   my $json = Net::REST::Codec::JSON->new;
   
-  $self->{acme}{jws_json} = JSON::XS->new->canonical->allow_nonref;
+  $self->{acme}{jws_json} = JSON->new->canonical->allow_nonref;
   if ( $param{key} ) {
     if ( $self->{acme}{key} = Crypt::OpenSSL::RSA->new_private_key ( $param{key} )) {
     

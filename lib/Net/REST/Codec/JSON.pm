@@ -3,12 +3,12 @@ package Net::REST::Codec::JSON;
 use strict;
 use warnings;
 
-use JSON::XS;
+use JSON;
 
 sub new {
   my $class = shift;
   bless {
-    json => JSON::XS->new->ascii->relaxed->allow_nonref
+    json => JSON->new->ascii->relaxed->allow_nonref
   }, $class;
 }
 
