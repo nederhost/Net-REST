@@ -34,3 +34,5 @@ rm -rf $RPM_BUILD_DIR/$RPM_PACKAGE_NAME
 %files
 /usr/local/share/perl5/Net/REST.pm
 /usr/local/share/perl5/Net/REST
+/usr/local/share/man/man3/Net::REST::Business::Sisow.3pm
+/usr/local/share/man/man3/Net::REST::SEPA::NL::ElectronicMandate.3pm
