@@ -5,7 +5,7 @@ use warnings;
 
 use base 'Net::REST';
 use Carp;
-use Digest::SHA;
+use Digest::SHA1;
 use Net::REST::Codec::XML;
 use URI::Encode;
 
@@ -78,7 +78,7 @@ sub _hook_pre_execute {
       $self->{sisow}{merchantkey}
     );
 
-    $param->{sha1} = Digest::SHA::sha1_hex (
+    $param->{sha1} = Digest::SHA1::sha1_hex (
       ( map { defined $param->{$_} ? $param->{$_} : '' } @{$hash_source} ),
       $self->{sisow}{merchantkey}
     );
@@ -125,7 +125,7 @@ sub _hook_post_parse {
       ) {
         my $t = $hash_source->{t} || $request;
         if ( 
-          Digest::SHA::sha1_hex (
+          Digest::SHA1::sha1_hex (
             map {
               if ( defined $r->{$top}{$t}{$_} ) {
                 $r->{$top}{$t}{$_};
