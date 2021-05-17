@@ -5,7 +5,7 @@ use warnings;
 
 use base 'Net::REST::Common::XMLRPC';
 use Carp;
-use Digest::SHA1;
+use Digest::SHA;
 use Net::REST::Codec::XML;
 use URI::Encode;
 
