@@ -10,6 +10,7 @@ use HTTP::Cookies;
 use LWP::UserAgent;
 use HTTP::Response;
 use HTTP::Request;
+use MIME::Base64;
 use Net::REST::Error;
 use Time::HiRes;
 
@@ -56,6 +57,16 @@ sub new {
         }
         
       } else { croak "Required parameter api_key not specified" }
+    } elsif ( $self->{config}{http_basic_authentication} and $param{username} ) {
+    
+      # HTTP Basic authentication
+      $self->{default_headers}{'Authorization'} = join ( ' ',
+        'Basic',
+        MIME::Base64::encode_base64 ( 
+          join ( ':', $param{username}, $param{password} ),
+          ''
+        )
+      );
     }
     
     # Initialise a user agent for doing requests.
