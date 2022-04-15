@@ -17,8 +17,8 @@ sub _init {
 
     api_key => {					# if present, requires an API key and indicates where to put it
       include_as => 'header',				# or 'argument'
-      name => 'Authorization',				# name of the header or argument to use
-      format => 'Bearer %s'				# how to format the API key (sprintf format string)
+      name => 'apikey',					# name of the header or argument to use
+      format => '%s'					# how to format the API key (sprintf format string)
     },
     
     request => {
