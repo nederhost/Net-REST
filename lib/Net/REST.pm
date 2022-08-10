@@ -39,8 +39,8 @@ sub new {
 
     # Headers and arguments which are to be sent on every request are
     # collected here.
-    $self->{default_headers} = {};
-    $self->{default_arguments} = {};
+    $self->{default_headers} ||= {};
+    $self->{default_arguments} ||= {};
   
     # Do we use API keys for this interface?
     if ( my $c = $self->{config}{api_key} ) {		
