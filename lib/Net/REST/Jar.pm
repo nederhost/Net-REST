@@ -52,7 +52,6 @@ sub _init {
     
     response => { 
       parser => $json,
-#      path_as_error => '/code'				# if the errors are returned as regular responses (or contained in HTTP error responses)
     },
 
   );
@@ -60,7 +59,7 @@ sub _init {
 
 sub get_jar_error {
   my $self = shift;
-  return $self->{global_state}{error}{error}{content};
+  return Net::REST::Codec::JSON->new->parse ( $self->{global_state}{error}{error}{content} );
 }
 
 sub set_origin {
