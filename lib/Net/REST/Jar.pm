@@ -59,7 +59,11 @@ sub _init {
 
 sub get_jar_error {
   my $self = shift;
-  return Net::REST::Codec::JSON->new->parse ( $self->{global_state}{error}{error}{content} );
+  return Net::REST::Codec::JSON->new->parse ( 
+    undef,
+    'application/json',
+    $self->{global_state}{error}{error}{content} 
+  );
 }
 
 sub set_origin {
