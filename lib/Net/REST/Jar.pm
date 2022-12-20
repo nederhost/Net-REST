@@ -58,6 +58,23 @@ sub _init {
   );
 }
 
+#
+# The JAR system expectes all parameters to be JSON-encoded, even those
+# passed as query parameters to a GET request.
+#
+
+sub _hook_pre_execute {
+  my $self = shift;
+  my ( $http_method, $method, $param ) = @_;
+
+  if ( $param && ref $param && 'HASH' && ( $http_method eq 'GET' )) {
+    while ( my ( $n, $v ) = each %{$param} ) {
+      my ( $dummy, $serialized ) = $self->{config}{request}{serializer}->serialize ( $method, $v );
+      $param->{$n} = $serialized;
+    }
+  }
+}
+
 sub get_jar_error {
   my $self = shift;
   return Net::REST::Codec::JSON->new->parse ( 
