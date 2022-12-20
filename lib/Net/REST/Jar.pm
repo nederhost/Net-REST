@@ -46,7 +46,7 @@ sub _init {
         'create' 	=> { http => 'post', 	pass_arguments => 1 },
         'update'	=> { http => 'put',	pass_arguments => 1 },
         'get'		=> { http => 'get', 	route => ['#0'] },
-        'query'		=> { http => 'get', 	pass-arguments => 1 },
+        'query'		=> { http => 'get', 	pass_arguments => 1 },
         'list'		=> { http => 'get',	pass_arguments => 1 }
       }
     },
