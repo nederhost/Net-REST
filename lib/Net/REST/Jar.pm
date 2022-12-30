@@ -59,8 +59,8 @@ sub _init {
 }
 
 #
-# The JAR system expectes all parameters to be JSON-encoded, even those
-# passed as query parameters to a GET request.
+# The JAR system expectes all non-scalar parameters to be JSON-encoded, even
+# those passed as query parameters to a GET request.
 #
 
 sub _hook_pre_execute {
@@ -69,8 +69,12 @@ sub _hook_pre_execute {
 
   if ( $param && ref $param && 'HASH' && ( $http_method eq 'GET' )) {
     while ( my ( $n, $v ) = each %{$param} ) {
-      my ( $dummy, $serialized ) = $self->{config}{request}{serializer}->serialize ( $method, $v );
-      $param->{$n} = $serialized;
+      if ( ref $v ) {
+        my ( $dummy, $serialized ) = $self->{config}{request}{serializer}->serialize ( $method, $v );
+        $param->{$n} = $serialized;
+      } else {
+        $param->{$n} = $v;
+      }
     }
   }
 }
