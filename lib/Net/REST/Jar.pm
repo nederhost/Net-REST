@@ -44,7 +44,9 @@ sub _init {
         '*' 		=> { route => ['&', '*'] },
         'post' 		=> { http => 'post', 	pass_arguments => 1 },
         'create' 	=> { http => 'post', 	pass_arguments => 1 },
-        'update'	=> { http => 'put',	pass_arguments => 1 },
+        'delete' 	=> { http => 'delete', 	pass_arguments => 1 },
+        'update'	=> { http => 'patch',	pass_arguments => 1 },
+        'patch'		=> { http => 'patch',	pass_arguments => 1 },
         'get'		=> { http => 'get', 	route => ['#0'] },
         'query'		=> { http => 'get', 	pass_arguments => 1 },
         'list'		=> { http => 'get',	pass_arguments => 1 }
@@ -56,6 +58,10 @@ sub _init {
     },
 
   );
+  
+  # Initialise an empty cache.
+  $self->{_jar_cache} = {}
+  
 }
 
 #
@@ -76,7 +82,7 @@ sub _hook_pre_execute {
         $param->{$n} = $v;
       }
     }
-  }
+  }  
 }
 
 sub get_jar_error {
