@@ -93,7 +93,7 @@ sub _hook_pre_parse {
   my $self = shift;
   my ( $resp_content, $response ) = @_;
   
-  $self->{jar_state}{last_response} = $response;
+  $self->{global_state}{jar}{last_response} = $response;
 }
 
 sub get_jar_error {
@@ -107,7 +107,7 @@ sub get_jar_error {
 
 sub last_status {
   my $self = shift;
-  return $self->{jar_state}{last_response}->code();
+  return $self->{global_state}{jar}{last_response}->code();
 }
 
 sub set_origin {
