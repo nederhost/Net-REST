@@ -85,6 +85,17 @@ sub _hook_pre_execute {
   }  
 }
 
+#
+# Make the last status code available.
+#
+
+sub _hook_pre_parse {
+  my $self = shift;
+  my ( $resp_content, $response ) = @_;
+  
+  $self->{jar_state}{last_response} = $response;
+}
+
 sub get_jar_error {
   my $self = shift;
   return Net::REST::Codec::JSON->new->parse ( 
@@ -92,6 +103,11 @@ sub get_jar_error {
     'application/json',
     $self->{global_state}{error}{error}{content} 
   );
+}
+
+sub last_status {
+  my $self = shift;
+  return $self->{jar_state}{last_response}->code();
 }
 
 sub set_origin {
