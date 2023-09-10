@@ -89,9 +89,9 @@ sub _hook_pre_execute {
 # Make the last status code available.
 #
 
-sub _hook_pre_parse {
+sub _hook_post_request {
   my $self = shift;
-  my ( $resp_content, $response ) = @_;
+  my ( $response ) = @_;
   
   $self->{global_state}{jar}{last_response} = $response;
 }
