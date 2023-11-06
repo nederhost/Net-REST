@@ -43,6 +43,7 @@ sub _init {
       methods => {
         '*' 		=> { route => ['&', '*'] },
         'post' 		=> { http => 'post', 	pass_arguments => 1 },
+        'put'		=> { http => 'put',	pass_arguments => 1 },
         'create' 	=> { http => 'post', 	pass_arguments => 1 },
         'delete' 	=> { http => 'delete', 	pass_arguments => 1 },
         'update'	=> { http => 'patch',	pass_arguments => 1 },
