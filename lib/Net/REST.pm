@@ -131,8 +131,19 @@ sub execute {
 
     } elsif (( ref $param eq 'HASH' ) || ( ref $param eq 'ARRAY' )) {
     
-      # Add parameters to the URL.
-      $uri->query_form ( $param );
+      if ( $self->{config}{get_with_query_string} ) {
+      
+        # Serialize the parameters and add them to the query string.
+        my ( $content_type, $content_body ) = $s->serialize ( $method, $param );
+        $uri->query ( $content_body );
+      
+      } else {
+    
+        # Add parameters to the URL.
+        $uri->query_form ( $param );
+        
+      }
+      
       $req->uri ( $uri );
       
     }

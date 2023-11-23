@@ -36,6 +36,7 @@ sub _init {
 
   $self->_set (
     base_url_ends_with => '/',
+    get_with_query_string => 1,
     
     request => {
       serializer => $json,
@@ -63,27 +64,6 @@ sub _init {
   # Initialise an empty cache.
   $self->{_jar_cache} = {}
   
-}
-
-#
-# The JAR system expectes all non-scalar parameters to be JSON-encoded, even
-# those passed as query parameters to a GET request.
-#
-
-sub _hook_pre_execute {
-  my $self = shift;
-  my ( $http_method, $method, $param ) = @_;
-
-  if ( $param && ref $param && 'HASH' && ( $http_method eq 'GET' )) {
-    while ( my ( $n, $v ) = each %{$param} ) {
-      if ( ref $v ) {
-        my ( $dummy, $serialized ) = $self->{config}{request}{serializer}->serialize ( $method, $v );
-        $param->{$n} = $serialized;
-      } else {
-        $param->{$n} = $v;
-      }
-    }
-  }  
 }
 
 #
