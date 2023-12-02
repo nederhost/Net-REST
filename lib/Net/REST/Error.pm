@@ -20,7 +20,7 @@ sub new {
     };
     $self->{headers} = {
       map {
-        $_ => $obj->header ( $_ )
+        lc ( $_ ) => $obj->header ( $_ )
       } ( $obj->header_field_names )
     };
   } else {
